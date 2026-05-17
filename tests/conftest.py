@@ -6,7 +6,6 @@ from typing import Any
 
 import pytest
 
-
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "mini_bundle.json"
 
 
