@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-import json
 from typing import Any
 
 import httpx
-import pytest
 
 from fhir_mcp.backend.hapi_proxy import HapiProxyBackend
 

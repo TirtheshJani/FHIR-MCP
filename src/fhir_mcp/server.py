@@ -65,10 +65,9 @@ class FhirMcpServer:
         return self._mcp
 
     def sse_app(self) -> Any:
+        from mcp.server.sse import SseServerTransport
         from starlette.applications import Starlette
         from starlette.routing import Mount, Route
-
-        from mcp.server.sse import SseServerTransport
 
         transport = SseServerTransport("/messages/")
         mcp_server = self._mcp

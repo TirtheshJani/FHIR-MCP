@@ -22,9 +22,7 @@ class HapiProxyBackend:
         r.raise_for_status()
         return r.json()  # type: ignore[no-any-return]
 
-    def search(
-        self, resource_type: str, criteria: dict[str, str]
-    ) -> list[dict[str, Any]]:
+    def search(self, resource_type: str, criteria: dict[str, str]) -> list[dict[str, Any]]:
         r = self._client.get(f"{self._base}/{resource_type}", params=criteria)
         r.raise_for_status()
         bundle: dict[str, Any] = r.json()

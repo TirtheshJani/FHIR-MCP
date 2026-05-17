@@ -4,6 +4,7 @@ Convert Synthea R4 FHIR bundle to R4B-compatible bundle.
 Only fixes the specific field renames/shape changes that fhir.resources R4B strict
 validation rejects. Each transformation block is labelled with the error it fixes.
 """
+
 from __future__ import annotations
 
 import copy
@@ -11,7 +12,6 @@ import gzip
 import json
 import sys
 from pathlib import Path
-
 
 # ---------------------------------------------------------------------------
 # Helper
