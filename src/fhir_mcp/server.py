@@ -15,10 +15,11 @@ class FhirMcpServer:
         self._register_tools()
 
     def _register_tools(self) -> None:
-        from fhir_mcp.tools import patients
+        from fhir_mcp.tools import conditions, encounters, medications, observations, patients
 
-        self._tools.append(patients.TOOL_DEF)
-        self._handlers[patients.TOOL_NAME] = patients.handle
+        for tool_mod in (patients, observations, medications, conditions, encounters):
+            self._tools.append(tool_mod.TOOL_DEF)
+            self._handlers[tool_mod.TOOL_NAME] = tool_mod.handle
 
         # Register list_tools and call_tool handlers
         self._update_tool_registration()
