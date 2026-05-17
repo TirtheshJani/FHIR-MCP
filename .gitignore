@@ -7,5 +7,5 @@ dist/
 build/
 *.egg-info/
 .venv/
-examples/synthea_raw/
+examples/synthea_raw*/
 synthea-with-dependencies.jar
