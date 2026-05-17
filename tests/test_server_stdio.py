@@ -33,3 +33,11 @@ async def test_search_patients_round_trip_returns_results() -> None:
 
     payload = json.loads(result.content[0].text)
     assert {p["id"] for p in payload} == {"p1", "p2", "p3"}
+
+
+@pytest.mark.asyncio
+async def test_create_server_provides_sse_app() -> None:
+    from fhir_mcp.server import create_server
+    server = create_server(backend=object())
+    app = server.sse_app()
+    assert callable(app), "sse_app must return an ASGI callable"

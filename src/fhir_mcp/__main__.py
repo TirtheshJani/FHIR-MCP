@@ -25,13 +25,25 @@ async def _run_stdio(bundle_path: Path) -> None:
         await server.asgi().run(read, write, server.asgi().create_initialization_options())
 
 
+async def _run_sse(bundle_path: Path, port: int) -> None:
+    import uvicorn
+
+    backend = InMemoryBackend.from_bundle(_load_bundle(bundle_path))
+    server = create_server(backend=backend)
+    config = uvicorn.Config(server.sse_app(), host="0.0.0.0", port=port, log_level="info")
+    await uvicorn.Server(config).serve()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="fhir-mcp")
-    parser.add_argument("--transport", choices=["stdio"], default="stdio")
+    parser.add_argument("--transport", choices=["stdio", "sse"], default="stdio")
     parser.add_argument("--bundle", type=Path, required=True)
+    parser.add_argument("--port", type=int, default=8000)
     args = parser.parse_args()
     if args.transport == "stdio":
         asyncio.run(_run_stdio(args.bundle))
+    elif args.transport == "sse":
+        asyncio.run(_run_sse(args.bundle, args.port))
 
 
 if __name__ == "__main__":
