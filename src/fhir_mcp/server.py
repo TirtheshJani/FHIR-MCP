@@ -15,9 +15,18 @@ class FhirMcpServer:
         self._register_tools()
 
     def _register_tools(self) -> None:
+        from fhir_mcp.adherence import compute as compute_adherence_mod
         from fhir_mcp.tools import conditions, encounters, medications, observations, patients
 
-        for tool_mod in (patients, observations, medications, conditions, encounters):
+        all_tool_mods = (
+            patients,
+            observations,
+            medications,
+            conditions,
+            encounters,
+            compute_adherence_mod,
+        )
+        for tool_mod in all_tool_mods:
             self._tools.append(tool_mod.TOOL_DEF)
             self._handlers[tool_mod.TOOL_NAME] = tool_mod.handle
 
