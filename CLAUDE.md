@@ -6,39 +6,38 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The repository is in a pre-scaffolding state — only `LICENSE` (MIT) and a stub `README.md` exist. There is no Python package, no tests, no build config yet. Treat the first task in any new session as "is the scaffold here?" — if not, create it before adding features.
 
+### First scaffolding session — ordering
+
+When the scaffold lands, build in this order. The `fhir_client.py` seam is the architectural lynchpin; validate it with one resource before committing five tools to it.
+
+1. `pyproject.toml` (`[project].name = "fhir-mcp"`) + minimal `fhir_mcp/__init__.py` + `fhir_mcp/__main__.py`.
+2. `fhir_client.py` with a `FhirClient` protocol and a `LocalBundleClient` impl reading a Synthea bundle from `data/synthea/`.
+3. One resource tool end-to-end (Patient) wired into a running MCP server, tested against a local Synthea bundle, **before** adding Observation, MedicationRequest, Condition, Encounter.
+4. Defer `compute_adherence` and `routing/` until the classifier artifact exists (see below).
+
 ## What this project is
 
 `fhir-mcp` is a Python **Model Context Protocol (MCP)** server that exposes **FHIR R4B** resources as tools an LLM agent can call. The five primary resource tools are **Patient, Observation, MedicationRequest, Condition, Encounter**.
 
+Resources must conform to **FHIR R4B specifically** — not R4 or R5. The shapes differ; Synthea must be invoked with an R4B-compatible profile (or a pre-generated R4B bundle source used) when producing test data.
+
 The differentiator — and the reason this project exists — is one composite tool:
 
-- **`compute_adherence`** routes incoming questions between two pipelines based on a published classifier from a May 2026 preprint:
+- **`compute_adherence`** routes incoming questions between two pipelines based on a published classifier from a May 2026 preprint (Jani et al. — fill citation in when public):
   - **structured-FHIR-wins-classification (AUC 0.997)** → route adherence-related questions to the **structured FHIR pipeline** (resource queries over Patient / MedicationRequest / Observation).
   - **narrative-wins-QA (AUC 0.843)** → route free-form clinical questions to a **RAG pipeline** over narrative notes.
+  - The classifier **is not yet built**; weights/code location is **TBD**. Do not invent a substitute classifier — wait for the artifact or ask the user.
 
 The MCP surface is intentionally small. The value is that `compute_adherence` operationalizes the preprint's routing finding inside an MCP tool an agent can call directly.
 
-## Planned architecture (build toward this)
+## Architecture
 
-```
-fhir_mcp/
-  server.py            # MCP server entrypoint; registers tools
-  fhir_client.py       # Thin wrapper over a FHIR R4B endpoint (or local Synthea bundles)
-  tools/
-    patient.py
-    observation.py
-    medication_request.py
-    condition.py
-    encounter.py
-    compute_adherence.py   # routing classifier + dispatch
-  routing/
-    classifier.py      # structured-vs-narrative router from the preprint
-    structured.py      # adherence pipeline over FHIR resources
-    rag.py             # narrative QA pipeline
-data/
-  synthea/             # Synthea-generated FHIR bundles (MIT-licensed test data)
-tests/
-```
+The package will be laid out in three layers:
+
+- `fhir_mcp/server.py` — MCP server entrypoint; registers tools with Anthropic's Python MCP SDK.
+- `fhir_mcp/fhir_client.py` — the **single seam** between tools and the underlying FHIR data source (local Synthea bundles or a live R4B server).
+- `fhir_mcp/tools/` — one module per FHIR resource, plus `compute_adherence`.
+- `fhir_mcp/routing/` — classifier + structured/RAG pipelines; only `compute_adherence` imports from here.
 
 Key architectural points that span files:
 
@@ -60,13 +59,7 @@ Test/demo data is **Synthea-generated FHIR R4B bundles** (MIT licensed, no crede
 
 ## Commands
 
-Conventions to use once `pyproject.toml` exists (none of these work yet — set them up first):
-
-- Install dev: `pip install -e ".[dev]"`
-- Run the MCP server: `python -m fhir_mcp` (or the entry point declared in `pyproject.toml`)
-- Tests: `pytest`
-- Single test: `pytest tests/test_x.py::test_name`
-- Lint/format: `ruff check .` and `ruff format .`
+No build config exists yet. The first scaffolding session should set up `pyproject.toml` (hatchling or uv), `ruff` for lint+format, and `pytest`. Until then there are no working dev commands — do not document any here.
 
 ## Branch policy for this environment
 
