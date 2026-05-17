@@ -1,6 +1,6 @@
 [project]
 name = "fhir-mcp"
-version = "0.0.1"
+version = "0.1.0"
 description = "Model Context Protocol server for FHIR R4B"
 readme = "README.md"
 license = {text = "MIT"}

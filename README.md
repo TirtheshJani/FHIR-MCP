@@ -1,3 +1,6 @@
+[![CI](https://github.com/TirtheshJani/FHIR-MCP/actions/workflows/ci.yml/badge.svg)](https://github.com/TirtheshJani/FHIR-MCP/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/fhir-mcp)](https://pypi.org/project/fhir-mcp/)
+
 # fhir-mcp
 
 Model Context Protocol server for FHIR R4B. Exposes Patient, Observation,
