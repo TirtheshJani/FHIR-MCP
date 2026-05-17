@@ -13,8 +13,10 @@ from fhir_mcp.server import create_server
 
 
 def _load_bundle(path: Path) -> dict[str, object]:
-    opener = gzip.open if path.suffix == ".gz" else open
-    with opener(path, "rt") as f:
+    if path.suffix == ".gz":
+        with gzip.open(path, "rt") as f:
+            return json.load(f)  # type: ignore[no-any-return]
+    with path.open("rt") as f:
         return json.load(f)  # type: ignore[no-any-return]
 
 
@@ -35,7 +37,10 @@ async def _run_sse(bundle_path: Path, port: int) -> None:
 
 
 def main() -> None:
+    from fhir_mcp import __version__
+
     parser = argparse.ArgumentParser(prog="fhir-mcp")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     parser.add_argument("--transport", choices=["stdio", "sse"], default="stdio")
     parser.add_argument("--bundle", type=Path, required=True)
     parser.add_argument("--port", type=int, default=8000)
