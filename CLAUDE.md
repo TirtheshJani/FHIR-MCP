@@ -61,6 +61,18 @@ Test/demo data is **Synthea-generated FHIR R4B bundles** (MIT licensed, no crede
 
 No build config exists yet. The first scaffolding session should set up `pyproject.toml` (hatchling or uv), `ruff` for lint+format, and `pytest`. Until then there are no working dev commands — do not document any here.
 
+## Project skills (in `.claude/skills/`)
+
+This project ships with five skills that constrain how sessions plan and build:
+
+- `writing-plans` — required format for implementation plans (header, checkbox tasks, TDD steps, no placeholders). Plans live at `docs/superpowers/plans/YYYY-MM-DD-<name>.md`.
+- `executing-plans` — load + execute an approved plan task by task.
+- `test-driven-development` — mandatory for all production code. Red-green-refactor with watch-the-test-fail; see `testing-anti-patterns.md` for what to avoid.
+- `dispatching-parallel-agents` — use when 2+ independent tasks have no shared state (e.g. the four resource tools in Phase 3 of the current plan).
+- `karpathy-guidelines` — surface tradeoffs, simplicity first, surgical changes, goal-driven execution.
+
+The current implementation plan is `docs/superpowers/plans/2026-05-17-fhir-mcp-v0.1.0.md`. Resolve its pre-flight open questions before starting Phase 1.
+
 ## Branch policy for this environment
 
 Develop on `claude/fhir-mcp-server-tNLYt`. Push to that branch only.
