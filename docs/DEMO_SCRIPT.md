@@ -21,9 +21,11 @@ This script guides a live demo or asciinema recording of Claude Desktop using al
 
 4. Open a new conversation. Confirm the fhir-mcp tools appear in the tool panel (hammer icon).
 
+Note: "p1" below is a placeholder. Synthea patient resources use UUIDs, so the agent will pick a real UUID at runtime after the Step 1 search (or you can substitute one from the bundle).
+
 ---
 
-## Step 1 — Search for patients (fhir_search_patients)
+## Step 1 - Search for patients (fhir_search_patients)
 
 **Type:** "Find all patients in the bundle and tell me how many there are."
 
@@ -34,7 +36,7 @@ This script guides a live demo or asciinema recording of Claude Desktop using al
 
 ---
 
-## Step 2 — Query observations (fhir_get_observations)
+## Step 2 - Query observations (fhir_get_observations)
 
 **Type:** "Show me the glucose lab results for patient p1."
 
@@ -45,7 +47,7 @@ This script guides a live demo or asciinema recording of Claude Desktop using al
 
 ---
 
-## Step 3 — Review medications (fhir_get_medications)
+## Step 3 - Review medications (fhir_get_medications)
 
 **Type:** "What medications is patient p1 prescribed? Is metformin on the list?"
 
@@ -55,7 +57,7 @@ This script guides a live demo or asciinema recording of Claude Desktop using al
 
 ---
 
-## Step 4 — Look up conditions (fhir_get_conditions)
+## Step 4 - Look up conditions (fhir_get_conditions)
 
 **Type:** "Does patient p1 have a diagnosis of type-2 diabetes?"
 
@@ -65,7 +67,7 @@ This script guides a live demo or asciinema recording of Claude Desktop using al
 
 ---
 
-## Step 5 — Review encounter history (fhir_get_encounters)
+## Step 5 - Review encounter history (fhir_get_encounters)
 
 **Type:** "How many outpatient visits has patient p1 had? When was the most recent one?"
 
@@ -75,7 +77,7 @@ This script guides a live demo or asciinema recording of Claude Desktop using al
 
 ---
 
-## Step 6 — Structured adherence query (compute_adherence, structured branch)
+## Step 6 - Structured adherence query (compute_adherence, structured branch)
 
 **Type:** "Did patient p1 take metformin in Q1 2026? What is their adherence ratio?"
 
@@ -86,7 +88,7 @@ This script guides a live demo or asciinema recording of Claude Desktop using al
 
 ---
 
-## Step 7 — Narrative adherence query (compute_adherence, narrative branch)
+## Step 7 - Narrative adherence query (compute_adherence, narrative branch)
 
 **Type:** "Describe patient p1's overall medication adherence pattern."
 
@@ -98,7 +100,7 @@ This script guides a live demo or asciinema recording of Claude Desktop using al
 
 ---
 
-## Step 8 — Ambiguous query (compute_adherence, both branches)
+## Step 8 - Ambiguous query (compute_adherence, both branches)
 
 **Type:** "Tell me about patient p1's health in general."
 
@@ -117,6 +119,6 @@ All six tools have been exercised:
 - `fhir_get_medications` (Step 3)
 - `fhir_get_conditions` (Step 4)
 - `fhir_get_encounters` (Step 5)
-- `compute_adherence` — structured, narrative, and ambiguous branches (Steps 6-8)
+- `compute_adherence` - structured, narrative, and ambiguous branches (Steps 6-8)
 
 The routing rule in `compute_adherence` is justified by Jani et al., May 2026 preprint (arXiv ID TBD): AUC 0.997 for structured-FHIR-wins classification, AUC 0.843 for narrative-wins free-form QA.
