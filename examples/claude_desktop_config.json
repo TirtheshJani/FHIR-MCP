@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "fhir-mcp": {
+      "command": "python",
+      "args": [
+        "-m",
+        "fhir_mcp",
+        "--bundle",
+        "/absolute/path/to/synthea_patients.json.gz"
+      ]
+    }
+  }
+}

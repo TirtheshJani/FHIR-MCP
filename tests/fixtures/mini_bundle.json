@@ -1,0 +1,417 @@
+{
+  "resourceType": "Bundle",
+  "id": "mini-test-bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "p1",
+        "name": [{"family": "Smith", "given": ["John"]}],
+        "gender": "male",
+        "birthDate": "1960-03-15"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "p2",
+        "name": [{"family": "Jones", "given": ["Jane"]}],
+        "gender": "female",
+        "birthDate": "1972-07-22"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "p3",
+        "name": [{"family": "Brown", "given": ["Bob"]}],
+        "gender": "male",
+        "birthDate": "1985-11-05"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-p1-1",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2339-0",
+              "display": "Glucose [Mass/volume] in Blood"
+            }
+          ]
+        },
+        "subject": {"reference": "Patient/p1"},
+        "effectiveDateTime": "2026-01-15",
+        "valueQuantity": {
+          "value": 142,
+          "unit": "mg/dL",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg/dL"
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-p2-1",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2339-0",
+              "display": "Glucose [Mass/volume] in Blood"
+            }
+          ]
+        },
+        "subject": {"reference": "Patient/p2"},
+        "effectiveDateTime": "2026-02-10",
+        "valueQuantity": {
+          "value": 118,
+          "unit": "mg/dL",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg/dL"
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-p3-1",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2339-0",
+              "display": "Glucose [Mass/volume] in Blood"
+            }
+          ]
+        },
+        "subject": {"reference": "Patient/p3"},
+        "effectiveDateTime": "2026-03-05",
+        "valueQuantity": {
+          "value": 105,
+          "unit": "mg/dL",
+          "system": "http://unitsofmeasure.org",
+          "code": "mg/dL"
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "med-p1-1",
+        "status": "active",
+        "intent": "order",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "860975",
+                "display": "metformin hydrochloride 500 MG Oral Tablet"
+              }
+            ],
+            "text": "metformin"
+          }
+        },
+        "subject": {"reference": "Patient/p1"},
+        "authoredOn": "2026-01-01",
+        "dispenseRequest": {
+          "quantity": {"value": 90, "unit": "tablet"},
+          "numberOfRepeatsAllowed": 5
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "med-p1-2",
+        "status": "active",
+        "intent": "order",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "860975",
+                "display": "metformin hydrochloride 500 MG Oral Tablet"
+              }
+            ],
+            "text": "metformin"
+          }
+        },
+        "subject": {"reference": "Patient/p1"},
+        "authoredOn": "2026-04-01",
+        "dispenseRequest": {
+          "quantity": {"value": 90, "unit": "tablet"},
+          "numberOfRepeatsAllowed": 5
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "med-p2-1",
+        "status": "active",
+        "intent": "order",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "860975",
+                "display": "metformin hydrochloride 500 MG Oral Tablet"
+              }
+            ],
+            "text": "metformin"
+          }
+        },
+        "subject": {"reference": "Patient/p2"},
+        "authoredOn": "2026-01-15",
+        "dispenseRequest": {
+          "quantity": {"value": 90, "unit": "tablet"},
+          "numberOfRepeatsAllowed": 3
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "med-p3-1",
+        "status": "active",
+        "intent": "order",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "860975",
+                "display": "metformin hydrochloride 500 MG Oral Tablet"
+              }
+            ],
+            "text": "metformin"
+          }
+        },
+        "subject": {"reference": "Patient/p3"},
+        "authoredOn": "2026-02-01",
+        "dispenseRequest": {
+          "quantity": {"value": 90, "unit": "tablet"},
+          "numberOfRepeatsAllowed": 3
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-p1-1",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "44054006",
+              "display": "Type 2 diabetes mellitus"
+            }
+          ]
+        },
+        "subject": {"reference": "Patient/p1"}
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-p2-1",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "44054006",
+              "display": "Type 2 diabetes mellitus"
+            }
+          ]
+        },
+        "subject": {"reference": "Patient/p2"}
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-p3-1",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "44054006",
+              "display": "Type 2 diabetes mellitus"
+            }
+          ]
+        },
+        "subject": {"reference": "Patient/p3"}
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-p1-1",
+        "status": "finished",
+        "class": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                "code": "AMB",
+                "display": "ambulatory"
+              }
+            ]
+          }
+        ],
+        "subject": {"reference": "Patient/p1"},
+        "actualPeriod": {"start": "2026-01-15", "end": "2026-01-15"}
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-p2-1",
+        "status": "finished",
+        "class": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                "code": "AMB",
+                "display": "ambulatory"
+              }
+            ]
+          }
+        ],
+        "subject": {"reference": "Patient/p2"},
+        "actualPeriod": {"start": "2026-02-10", "end": "2026-02-10"}
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-p3-1",
+        "status": "finished",
+        "class": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                "code": "AMB",
+                "display": "ambulatory"
+              }
+            ]
+          }
+        ],
+        "subject": {"reference": "Patient/p3"},
+        "actualPeriod": {"start": "2026-03-05", "end": "2026-03-05"}
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "doc-p1-1",
+        "status": "current",
+        "type": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "34117-2",
+              "display": "History and physical note"
+            }
+          ]
+        },
+        "subject": {"reference": "Patient/p1"},
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/plain",
+              "data": "UGF0aWVudCBwMSBoYXMgYmVlbiBhZGhlcmVudCB0byBtZXRmb3JtaW4gdGhlcmFweS4="
+            }
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "doc-p2-1",
+        "status": "current",
+        "type": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "34117-2",
+              "display": "History and physical note"
+            }
+          ]
+        },
+        "subject": {"reference": "Patient/p2"},
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/plain",
+              "data": "UGF0aWVudCBwMiBoYXMgYmVlbiBhZGhlcmVudCB0byBtZXRmb3JtaW4gdGhlcmFweS4="
+            }
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "doc-p3-1",
+        "status": "current",
+        "type": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "34117-2",
+              "display": "History and physical note"
+            }
+          ]
+        },
+        "subject": {"reference": "Patient/p3"},
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/plain",
+              "data": "UGF0aWVudCBwMyBoYXMgYmVlbiBhZGhlcmVudCB0byBtZXRmb3JtaW4gdGhlcmFweS4="
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

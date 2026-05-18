@@ -1,0 +1,15 @@
+name: publish
+on:
+  push:
+    tags: ["v*"]
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    environment: pypi
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv build
+      - uses: pypa/gh-action-pypi-publish@release/v1

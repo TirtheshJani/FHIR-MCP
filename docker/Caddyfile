@@ -1,0 +1,3 @@
+fhir-mcp.example.com {
+    reverse_proxy fhir-mcp:8000
+}
