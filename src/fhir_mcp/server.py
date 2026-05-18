@@ -38,7 +38,7 @@ class FhirMcpServer:
         """Re-register list_tools after adding more tools."""
         tools_snapshot = list(self._tools)
 
-        @self._mcp.list_tools()  # type: ignore[misc]
+        @self._mcp.list_tools()  # type: ignore[misc, no-untyped-call, untyped-decorator]
         async def _list_tools() -> list[Tool]:
             return tools_snapshot
 
@@ -47,7 +47,7 @@ class FhirMcpServer:
         backend = self._backend
         handlers = self._handlers
 
-        @self._mcp.call_tool()  # type: ignore[misc]
+        @self._mcp.call_tool()  # type: ignore[misc, no-untyped-call, untyped-decorator]
         async def _call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
             if name not in handlers:
                 raise ValueError(f"unknown tool: {name}")
