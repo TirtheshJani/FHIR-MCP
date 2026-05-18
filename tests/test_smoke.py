@@ -1,12 +1,12 @@
+import subprocess
+import sys
+
+
 def test_package_imports_with_version() -> None:
     import fhir_mcp
 
     assert isinstance(fhir_mcp.__version__, str)
     assert fhir_mcp.__version__ != ""
-
-
-import subprocess
-import sys
 
 
 def test_version_flag_prints_version() -> None:
