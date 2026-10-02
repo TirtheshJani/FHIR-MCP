@@ -4,75 +4,87 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-The repository is in a pre-scaffolding state — only `LICENSE` (MIT) and a stub `README.md` exist. There is no Python package, no tests, no build config yet. Treat the first task in any new session as "is the scaffold here?" — if not, create it before adding features.
-
-### First scaffolding session — ordering
-
-When the scaffold lands, build in this order. The `fhir_client.py` seam is the architectural lynchpin; validate it with one resource before committing five tools to it.
-
-1. `pyproject.toml` (`[project].name = "fhir-mcp"`) + minimal `fhir_mcp/__init__.py` + `fhir_mcp/__main__.py`.
-2. `fhir_client.py` with a `FhirClient` protocol and a `LocalBundleClient` impl reading a Synthea bundle from `data/synthea/`.
-3. One resource tool end-to-end (Patient) wired into a running MCP server, tested against a local Synthea bundle, **before** adding Observation, MedicationRequest, Condition, Encounter.
-4. Defer `compute_adherence` and `routing/` until the classifier artifact exists (see below).
+v0.1.0 is implemented and tested: a Python MCP server (`src/fhir_mcp`) exposing FHIR R4B resources as agent tools, with stdio and SSE transports, Docker, CI, and bundled synthetic data. v0.2.0 is planned in `docs/superpowers/plans/2026-05-18-fhir-mcp-v0.2.0.md`. When docs and code disagree, trust the code.
 
 ## What this project is
 
-`fhir-mcp` is a Python **Model Context Protocol (MCP)** server that exposes **FHIR R4B** resources as tools an LLM agent can call. The five primary resource tools are **Patient, Observation, MedicationRequest, Condition, Encounter**.
+`fhir-mcp` is a **Model Context Protocol (MCP)** server that exposes **FHIR R4B** resources as tools an LLM agent can call:
 
-Resources must conform to **FHIR R4B specifically** — not R4 or R5. The shapes differ; Synthea must be invoked with an R4B-compatible profile (or a pre-generated R4B bundle source used) when producing test data.
+- `fhir_search_patients`, `fhir_get_observations`, `fhir_get_medications`, `fhir_get_conditions`, `fhir_get_encounters` (thin passthroughs).
+- `compute_adherence`, the composite tool and the reason the project exists. It routes a question to a structured pipeline (dose-count ratio over `MedicationRequest`), a narrative pipeline (`DocumentReference` + `Composition` for the agent to summarize), or both.
 
-The differentiator — and the reason this project exists — is one composite tool:
+Resources must conform to **FHIR R4B specifically**, not R4 or R5. Synthea output is converted with `scripts/convert_r4_to_r4b.py` and checked with `scripts/validate_bundle.py`.
 
-- **`compute_adherence`** routes incoming questions between two pipelines based on a published classifier from a May 2026 preprint (Jani et al. — fill citation in when public):
-  - **structured-FHIR-wins-classification (AUC 0.997)** → route adherence-related questions to the **structured FHIR pipeline** (resource queries over Patient / MedicationRequest / Observation).
-  - **narrative-wins-QA (AUC 0.843)** → route free-form clinical questions to a **RAG pipeline** over narrative notes.
-  - The classifier **is not yet built**; weights/code location is **TBD**. Do not invent a substitute classifier — wait for the artifact or ask the user.
+### Routing and the classifier
 
-The MCP surface is intentionally small. The value is that `compute_adherence` operationalizes the preprint's routing finding inside an MCP tool an agent can call directly.
+Routing today is `HeuristicRouter` in `src/fhir_mcp/adherence/routing.py`: regex keyword rules, behind a `Router` protocol (`detect(question) -> Intent`). The split is motivated by a May 2026 preprint (Jani et al., citation forthcoming; reported AUC 0.997 structured-wins classification, AUC 0.843 narrative-wins QA). Those numbers describe the preprint's classifier, not the heuristic.
+
+The trained classifier **is not in this repo** and its artifact location is TBD. Do not invent a substitute classifier, new metrics, or a citation. Wait for the artifact or ask the user. The v0.2.0 plan adds an opt-in `ClassifierRouter` via `FHIR_MCP_ROUTER=classifier`.
 
 ## Architecture
 
-The package will be laid out in three layers:
+```
+src/fhir_mcp/
+  __main__.py      CLI: --bundle (required), --transport {stdio,sse}, --port, --version
+  server.py        FhirMcpServer: registers TOOL_DEF/handle from each tool module; sse_app()
+  backend/
+    base.py        FhirBackend protocol (read, search): the single data seam
+    in_memory.py   InMemoryBackend.from_bundle(dict); search filters only on "patient"
+    hapi_proxy.py  HapiProxyBackend (httpx, `proxy` extra); library only, not wired to CLI
+  tools/           one module per resource: TOOL_NAME, TOOL_DEF (mcp.types.Tool), handle()
+  adherence/
+    routing.py     Intent, Router protocol, HeuristicRouter
+    structured.py  compute_structured_adherence
+    narrative.py   collect_narrative_resources
+    compute.py     compute_adherence tool (TOOL_DEF + handle)
+```
 
-- `fhir_mcp/server.py` — MCP server entrypoint; registers tools with Anthropic's Python MCP SDK.
-- `fhir_mcp/fhir_client.py` — the **single seam** between tools and the underlying FHIR data source (local Synthea bundles or a live R4B server).
-- `fhir_mcp/tools/` — one module per FHIR resource, plus `compute_adherence`.
-- `fhir_mcp/routing/` — classifier + structured/RAG pipelines; only `compute_adherence` imports from here.
+Key points:
 
-Key architectural points that span files:
-
-- **Tool boundary = MCP tool, not Python function.** Each FHIR resource tool should accept a small, typed argument set (e.g. `patient_id`, search params) and return JSON-serialisable FHIR resources. Tools are the agent-facing contract; keep their signatures stable.
-- **Data source is pluggable.** The same tool implementations must work against (a) local Synthea bundles loaded from disk for tests/demo and (b) a live FHIR R4B server. Put that switch behind `fhir_client.py`; do not branch on it inside individual tools.
-- **`compute_adherence` is the only tool with routing logic.** All other tools are thin FHIR passthroughs. The classifier lives in `routing/classifier.py` and must be unit-testable without an MCP server running.
-- **MCP SDK is Anthropic's Python MCP SDK.** Follow the SDK's tool registration patterns; don't invent a parallel abstraction.
-
-## Distribution & hosting plan
-
-- **PyPI package name: `fhir-mcp`** — keep `pyproject.toml` `[project].name` consistent.
-- **Reference deployment: Oracle Cloud Always Free (ARM Ampere).** Anything platform-specific (systemd unit, Docker for arm64) should be ARM-compatible.
-- **Demo path: Claude Desktop.** README install instructions target Claude Desktop's MCP config; keep that flow working end-to-end.
-- **Listed in the public MCP server registry** once shipped.
-
-## Data
-
-Test/demo data is **Synthea-generated FHIR R4B bundles** (MIT licensed, no credentialing needed). Do not commit PHI; do not pull from real clinical sources.
+- **Tool boundary = MCP tool.** Each tool takes a small typed argument set and returns JSON-serialisable FHIR resources as `TextContent`. Keep signatures stable; they are the agent-facing contract.
+- **Data source is pluggable.** Tools only call `FhirBackend`. Do not branch on backend type inside a tool.
+- **Only `compute_adherence` has logic.** Router and pipelines must stay unit-testable without an MCP server.
+- **MCP SDK:** Anthropic's Python `mcp` package, pinned `<2` because 2.x removed the `Server.list_tools` / `Server.call_tool` decorators used in `server.py`. A 2.x migration is a deliberate future task, not a drive-by.
 
 ## Commands
 
-No build config exists yet. The first scaffolding session should set up `pyproject.toml` (hatchling or uv), `ruff` for lint+format, and `pytest`. Until then there are no working dev commands — do not document any here.
+```bash
+pip install -e ".[dev]"                 # add ",proxy" for HapiProxyBackend
+ruff check .                            # lint (CI)
+ruff format --check .                   # format check (CI); *.md excluded
+mypy                                    # strict, over src/fhir_mcp (CI)
+pytest -q                               # all tests (CI)
+pytest tests/test_server_stdio.py -q    # stdio round trip through a real subprocess
+pytest tests/test_server_sse.py -q      # SSE round trip through in-process uvicorn
+
+fhir-mcp --bundle examples/synthea_patients.json.gz                       # stdio
+fhir-mcp --transport sse --port 8000 --bundle examples/synthea_patients.json.gz
+docker build -f docker/Dockerfile -t fhir-mcp .                           # SSE on :8000
+```
+
+CI (`.github/workflows/ci.yml`) runs ruff check, ruff format --check, mypy, and pytest on `ubuntu-latest` and `ubuntu-24.04-arm` for Python 3.11 and 3.12, plus an arm64 Docker build and `/sse` smoke test. `publish.yml` publishes to PyPI on `v*` tags. Note: the PyPI name `fhir-mcp` is currently held by an unrelated project, so resolve naming before tagging a release.
+
+## Data
+
+Test and demo data is Synthea-generated FHIR R4B (`examples/synthea_patients.json.gz`, 100 patients; `tests/fixtures/mini_bundle.json`, patients p1 to p3). Do not commit PHI; do not pull from real clinical sources.
+
+## Distribution and hosting
+
+- Package name in `pyproject.toml`: `fhir-mcp`; console script `fhir-mcp`.
+- Reference deployment: Oracle Cloud Always Free (ARM Ampere), see `docs/DEPLOY_ORACLE.md`. Keep anything platform-specific arm64-compatible.
+- Demo path: Claude Desktop via `examples/claude_desktop_config.json`. Keep that flow working end to end.
+- MCP registry entry draft: `docs/MCP_REGISTRY_ENTRY.md`.
 
 ## Project skills (in `.claude/skills/`)
 
-This project ships with five skills that constrain how sessions plan and build:
+- `writing-plans`: required format for implementation plans. Plans live at `docs/superpowers/plans/YYYY-MM-DD-<name>.md`.
+- `executing-plans`: execute an approved plan task by task.
+- `test-driven-development`: mandatory for production code (red, green, refactor; watch the test fail).
+- `dispatching-parallel-agents`: for 2+ independent tasks with no shared state.
+- `karpathy-guidelines`: surface tradeoffs, simplicity first, surgical changes, goal-driven execution.
 
-- `writing-plans` — required format for implementation plans (header, checkbox tasks, TDD steps, no placeholders). Plans live at `docs/superpowers/plans/YYYY-MM-DD-<name>.md`.
-- `executing-plans` — load + execute an approved plan task by task.
-- `test-driven-development` — mandatory for all production code. Red-green-refactor with watch-the-test-fail; see `testing-anti-patterns.md` for what to avoid.
-- `dispatching-parallel-agents` — use when 2+ independent tasks have no shared state (e.g. the four resource tools in Phase 3 of the current plan).
-- `karpathy-guidelines` — surface tradeoffs, simplicity first, surgical changes, goal-driven execution.
+## Repo conventions
 
-The current implementation plan is `docs/superpowers/plans/2026-05-17-fhir-mcp-v0.1.0.md`. Resolve its pre-flight open questions before starting Phase 1.
-
-## Branch policy for this environment
-
-Develop on `claude/fhir-mcp-server-tNLYt`. Push to that branch only.
+- No em dashes in code, docs, or commit messages.
+- Stage specific paths; never `git add -A`.
+- Branches: develop on a feature branch (for example `claude/<topic>`) and open a PR to `main`. Never push to `main` without explicit permission.

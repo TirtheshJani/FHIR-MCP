@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- SSE transport: the `/sse` route handler now takes a Starlette `Request` (per the `mcp.server.sse` usage pattern). Previously every `GET /sse` returned HTTP 500. Covered by a new SSE round-trip test.
+- Pin `mcp>=1.0.0,<2`. The `mcp` 2.x line removed the `Server.list_tools` / `Server.call_tool` decorators this server uses, which broke installs that resolved to 2.x.
+- Exclude Markdown files from `ruff format`, since newer ruff releases format Python blocks inside Markdown plan docs and failed CI.
+
+### Documentation
+
+- README rewrite (architecture diagram, tool reference, verified quickstart, honest status and roadmap), refreshed `CLAUDE.md`, and new `CONTRIBUTING.md`, `SECURITY.md`, `CITATION.cff`.
+
 ## [0.1.0] - 2026-05-18
 
 ### Added

@@ -8,7 +8,7 @@ This script guides a live demo or asciinema recording of Claude Desktop using al
 
 1. Install the package:
    ```bash
-   pip install fhir-mcp
+   git clone https://github.com/TirtheshJani/FHIR-MCP.git && cd FHIR-MCP && pip install -e .
    ```
 
 2. Merge the Claude Desktop config block from `examples/claude_desktop_config.json` into your local config file.

@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+title: "fhir-mcp: a Model Context Protocol server for FHIR R4B"
+type: software
+authors:
+  - family-names: Jani
+    given-names: Tirthesh
+version: 0.1.0
+date-released: 2026-05-18
+license: MIT
+repository-code: "https://github.com/TirtheshJani/FHIR-MCP"
+keywords:
+  - mcp
+  - fhir
+  - healthcare
+  - llm
+  - agent
+abstract: >-
+  An MCP server exposing FHIR R4B Patient, Observation, MedicationRequest,
+  Condition, and Encounter resources as agent tools, plus a composite
+  compute_adherence tool that routes questions between a structured FHIR
+  pipeline and a narrative-resource pipeline.
