@@ -67,19 +67,28 @@ class FhirMcpServer:
     def sse_app(self) -> Any:
         from mcp.server.sse import SseServerTransport
         from starlette.applications import Starlette
+        from starlette.requests import Request
+        from starlette.responses import Response
         from starlette.routing import Mount, Route
 
         transport = SseServerTransport("/messages/")
         mcp_server = self._mcp
 
-        async def handle_sse(scope: Any, receive: Any, send: Any) -> None:
-            async with transport.connect_sse(scope, receive, send) as (read, write):
+        # Starlette calls a Route endpoint with a Request, not raw ASGI args.
+        # Pattern follows the mcp.server.sse module docstring.
+        async def handle_sse(request: Request) -> Response:
+            async with transport.connect_sse(
+                request.scope,
+                request.receive,
+                request._send,
+            ) as (read, write):
                 await mcp_server.run(read, write, mcp_server.create_initialization_options())
+            return Response()
 
         return Starlette(
             routes=[
-                Route("/sse", endpoint=handle_sse),
-                Mount("/messages", app=transport.handle_post_message),
+                Route("/sse", endpoint=handle_sse, methods=["GET"]),
+                Mount("/messages/", app=transport.handle_post_message),
             ]
         )
 
