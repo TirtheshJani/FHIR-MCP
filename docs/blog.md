@@ -57,7 +57,7 @@ A demo bundle with 100 Synthea-generated FHIR R4B patients ships with the packag
 
 ## Live reference deployment
 
-A live SSE endpoint runs on Oracle Always Free ARM (Ampere aarch64). See `docs/DEPLOY_ORACLE.md` for the full provisioning runbook. The endpoint URL will be published once the 24-hour deployment soak passes.
+The reference deployment target is Oracle Always Free ARM (Ampere aarch64). See `docs/DEPLOY_ORACLE.md` for the full provisioning runbook. No public endpoint URL is published.
 
 For self-hosting, the repository includes a `docker/Dockerfile` (python:3.11-slim, multi-arch via buildx) and a `docker/docker-compose.yml` with a Caddy sidecar for automatic TLS via Let's Encrypt.
 

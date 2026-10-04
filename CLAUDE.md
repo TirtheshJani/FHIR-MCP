@@ -48,7 +48,7 @@ Key architectural points that span files:
 
 ## Distribution & hosting plan
 
-- **PyPI package name: `fhir-mcp`** — keep `pyproject.toml` `[project].name` consistent.
+- **Not on PyPI.** The PyPI name `fhir-mcp` belongs to another project (DhairyaShah981/fhir-mcp). Install from git. Do not push a `v*` tag or publish until the owner picks a free name: a `v*` tag triggers `.github/workflows/publish.yml`.
 - **Reference deployment: Oracle Cloud Always Free (ARM Ampere).** Anything platform-specific (systemd unit, Docker for arm64) should be ARM-compatible.
 - **Demo path: Claude Desktop.** README install instructions target Claude Desktop's MCP config; keep that flow working end-to-end.
 - **Listed in the public MCP server registry** once shipped.

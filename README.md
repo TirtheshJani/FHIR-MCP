@@ -55,10 +55,14 @@ Heuristic intent router classifies the question as:
   DocumentReference and Composition resources for the agent to summarize.
 - **ambiguous** runs both and returns both.
 
-The routing rule is justified by Jani et al., May 2026 preprint
-(citation forthcoming, arXiv ID TBD). The preprint reports
-AUC 0.997 for structured-FHIR-wins downstream classification and
-AUC 0.843 for narrative-wins free-form QA. The Router protocol allows
+The routing rule is motivated by Jani (2026), "Representation Wins on
+QA, Not on ML" (completed manuscript, May 2026; Zenodo deposit,
+doi:10.5281/zenodo.20263384; arXiv submission pending). On 200
+synthetic patients and 13,800 adherence questions, narrative RAG won
+free-form QA (40.6% exact match, against 35.3% and 33.4% for the two
+structured systems), and structured FHIR features won adherence
+prediction (LightGBM AUC 0.997, against 0.846 for narrative features).
+The Router protocol allows
 a future v0.2 release to swap the heuristic for the trained classifier
 with no other code changes.
 
@@ -69,7 +73,8 @@ Do NOT use this server with real PHI. See `examples/` for sample data.
 
 ## Reference deployment
 
-A live SSE endpoint runs on Oracle Always Free ARM. URL in `docs/DEPLOY_ORACLE.md`.
+`docs/DEPLOY_ORACLE.md` is the runbook for serving this over SSE on an
+Oracle Always Free ARM instance. No public endpoint URL is published.
 
 ## License
 
