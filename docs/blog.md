@@ -32,7 +32,7 @@ The structured branch computes a dose-count ratio from MedicationRequest dispens
 ## Install and quickstart
 
 ```bash
-pip install fhir-mcp
+pip install git+https://github.com/TirtheshJani/FHIR-MCP.git
 ```
 
 Drop this block into your Claude Desktop config file (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):

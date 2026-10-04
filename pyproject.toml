@@ -14,7 +14,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-  "mcp>=1.0.0",
+  "mcp>=1.0.0,<2",
   "fhir.resources>=7.1.0",
   "pydantic>=2.0",
 ]
@@ -43,6 +43,11 @@ packages = ["src/fhir_mcp"]
 src = ["src"]
 line-length = 100
 target-version = "py311"
+
+[tool.ruff.format]
+# Newer ruff releases also format Python blocks inside Markdown. Plan docs are
+# historical records, so keep the formatter to real source files.
+exclude = ["*.md"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM"]
