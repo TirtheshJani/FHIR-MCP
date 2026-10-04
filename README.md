@@ -1,5 +1,4 @@
 [![CI](https://github.com/TirtheshJani/FHIR-MCP/actions/workflows/ci.yml/badge.svg)](https://github.com/TirtheshJani/FHIR-MCP/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/fhir-mcp)](https://pypi.org/project/fhir-mcp/)
 
 # fhir-mcp
 
@@ -11,7 +10,7 @@ narrative-resource pipeline.
 ## Install
 
 ```bash
-pip install fhir-mcp
+pip install git+https://github.com/TirtheshJani/FHIR-MCP.git
 ```
 
 ## Quick start with Claude Desktop
